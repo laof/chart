@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>circle</title>
+  </head>
+  <body>
+    <div class="test"></div>
+    <div class="main"></div>
+
+    <script>
+      const x = 300;
+      const y = 300;
+      const r = 220;
+      const dom = document.querySelector(".main");
+      const colors = ["red", "yellow", "green", "blue", "firebrick"];
+      function circle(arr) {
+        const total = arr.reduce((prev, next) => prev + next, 0);
+        arr = arr.sort((a, b) => b - a);
+        const width = x * 2;
+        const height = y * 2;
+
+        const len = Math.PI * r * 2;
+        let next = 0;
+        const list = arr.map((num, i) => {
+          const just = next;
+          let offset = Math.round(len - (len * num) / total);
+          const rotate = (180 * (len - offset)) / (Math.PI * r);
+          next += rotate;
+          return `<circle cx="${x}" stroke-dashoffset="${offset}" style="transform:rotate(${just}deg);" stroke-dasharray="${len}" transform-origin="${x}px ${y}px" cy="${y}" r="${r}" stroke-width="84" stroke="${colors[i]}" fill="none" ></circle>`;
+        });
+        const label = { width: 100, height: 24, top: 0, left: 0 };
+        label.top = y - label.height / 2;
+        label.left = x - label.width / 2;
+        let content = `<div class="cirbox" style="position:relative;width:${width}px;height:${height}px">
+          <svg width="${width}" height="${height}"  style="transform: rotate(-90deg);">
+            ${list.join(
+              ""
+            )}</svg><text class="useNum" style="position:absolute;left:${
+          label.left
+        }px;height:${label.height}px;line-height:${label.height}px;top:${
+          label.top
+        }px;width:${label.width}px;text-align:center;">${total}</text></div>`;
+        dom.innerHTML = content;
+      }
+
+      circle([5, 335, 55, 70, 20]);
+    </script>
+  </body>
+</html>
