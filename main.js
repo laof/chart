@@ -1,14 +1,14 @@
 //
 
 const colors = [
-  "red",
-  "yellow",
-  "green",
-  "coral",
-  "blue",
-  "firebrick",
-  "black",
-  "gold",
+  'red',
+  'yellow',
+  'green',
+  'coral',
+  'blue',
+  'firebrick',
+  'black',
+  'gold',
 ];
 function circle(dom, opt, arr) {
   const { x, y, r, stroke } = opt;
@@ -38,21 +38,43 @@ function circle(dom, opt, arr) {
       `style="transform:rotate(${just}deg);"`,
       `cx="${x}" cy="${y}" r="${r}"`,
     ];
-    return `<circle fill="none" ${attr.join(" ")}></circle>`;
+    return `<circle fill="none" ${attr.join(' ')}></circle>`;
   });
   const label = { width: 100, height: 24, top: 0, left: 0 };
   label.top = y - label.height / 2;
   label.left = x - label.width / 2;
-  let content = `<div class="cirbox" style="position:relative;width:${width}px;height:${height}px">
-    <svg width="${width}" height="${height}"  style="transform: rotate(-90deg);">
-      ${list.join(
-        ""
-      )}</svg><text class="useNum" style="position:absolute;left:${
-    label.left
-  }px;height:${label.height}px;line-height:${label.height}px;top:${
-    label.top
-  }px;width:${label.width}px;text-align:center;">${total}</text></div>`;
-  dom.innerHTML = content;
+
+  const svg = createHTML('svg', {
+    attr: {
+      width: width,
+      height: height,
+    },
+    content: list.join(''),
+  });
+
+  const num = createHTML('div', {
+    style: {
+      position: 'absolute',
+      left: `${label.left}px`,
+      top: `${label.top}px`,
+      height: `${label.height}px`,
+      width: `${label.width}px`,
+      lineHeight: `${label.height}px`,
+      textAlign: 'center',
+    },
+    content: total,
+  });
+
+  const container = createHTML('div', {
+    style: {
+      position: 'relative',
+      width: `${width}px`,
+      height: `${height}px`,
+    },
+    content: svg + num,
+  });
+
+  dom.innerHTML = container;
 }
 
 const test = [[399], [308], [184], [297]];
@@ -71,8 +93,8 @@ const large = {
   stroke: 80,
 };
 
-create(document.querySelectorAll("li"), small);
-create(document.querySelectorAll("ol"), large);
+create(document.querySelectorAll('li'), small);
+create(document.querySelectorAll('ol'), large);
 
 function create(dom, opt) {
   Array.from(dom).forEach((dom, i) => {
@@ -90,4 +112,17 @@ function create(dom, opt) {
 
 function random(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function createHTML(name, opt) {
+  const attr = opt.attr || {};
+  const style = opt.style || {};
+  const content = opt.content || '';
+  const a = Object.keys(attr).map((k) => lower(k) + '=' + attr[k]);
+  const s = Object.keys(style).map((k) => lower(k) + ':' + style[k]);
+  return `<${name} ${a.join(' ')} style="${s.join(';')}">${content}</${name}>`;
+}
+
+function lower(key) {
+  return key.replace(/[A-Z\.]/g, (d) => '-' + d.toLocaleLowerCase());
 }
